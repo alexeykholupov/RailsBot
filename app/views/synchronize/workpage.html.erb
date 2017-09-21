@@ -1,16 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+</style>
 </head>
 <body>
 <h1>Synchronize Page</h1>
 <a href= '/'>Back to user list\creation page</a>
 <%= form_tag("/work", method: "post") do %>
-  <p><%= label_tag(:a, "App url") %>
-  <%= text_field_tag(:a) %></p>
+  <p><%= label(:url, "App url") %>
+  <%= text_field(:appurl, :url) %></p>
   <p>myTarget User <%= collection_select(:user_id, :id, User.all, :id, :email) %></p>
   <%= submit_tag("Synchronize") %>
 <% end %>
 </form>
+<table style="width:100%">
+  <tr>
+    <th>App url</th>
+    <th>App name</th>
+    <th>Status</th>
+  </tr>
+ 
+  <% @apps.each do |app| %>
+    <tr>
+      <td><%= app.url %></td>
+      <td><%= app.appname %></td>
+      <td><%= app.status %></td>
+    </tr>
+  <% end %>
+</table>
 </body>
 </html>

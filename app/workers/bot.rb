@@ -2,10 +2,11 @@ class Bot
   attr_reader :session, :environment, :authenticate, :placement_list
   DEVELOPMENT = 'https://target-sandbox.my.com'.freeze
   PRODUCTION = 'https://target.my.com'.freeze
-  def initialize(user_id, url, environment, session)
+  def initialize(user_id, url, environment, session, app_id)
     @user_id = user_id
     @url = url
     @session = session
+    @app_id = app_id
     @environment = DEVELOPMENT if environment == '2'
     @environment = PRODUCTION if environment == '1'
     @authenticate = false
@@ -13,6 +14,9 @@ class Bot
 
   def authenticate_user
     signin_button = "//span[@class= 'js-button ph-button ph-button_profilemenu ph-button_light ph-button_profilemenu_signin']"
+    @app = App.find(@app_id)
+    @app.status = "In progress"
+    @app.save
     @session.visit @environment
     sleep 10
     @session.find(:xpath, signin_button).click
@@ -26,15 +30,24 @@ class Bot
     if @authenticate == true
       create_app_button = "//span[@class= 'main-button__label']"
       next_button = "//div[@class= 'paginator__button paginator__button_right js-control-inc']"
+      appname_text = "//span[@class= 'pad-setting__platform-preview__title js-platform-preview-app-title']"
       @session.visit environment + '/create_pad_groups/'
-      @session.fill_in('Enter site/app URL', with: @url)
-      @appname = @session.find(:xpath, "//span[@class= 'pad-setting__platform-preview__title js-platform-preview-app-title']").text
       sleep 10
+      @session.fill_in('Enter site/app URL', with: @url)
+      while @session.has_no_selector?(:xpath, appname_text)
+        sleep 5
+      end
+      @appname = @session.find(:xpath, appname_text).text
+      @app.appname = @appname
+      @app.save
       @session.fill_in('Site/app name', with: @appname)
       sleep 10
       @session.find(:xpath, create_app_button).click
       sleep 20
       while @session.has_no_selector?('a', text: @appname)
+        while @session.has_no_selector?(:xpath, next_button)
+          sleep 5
+        end
         @session.find(:xpath, next_button).click
         sleep 5
       end
@@ -54,10 +67,13 @@ class Bot
   end
 
   def create_placements(n)
+    create_placement = "//span[@class= 'create-pad-page__save-button js-save-button']"
     n.times do
       session.visit environment + "/pad_groups/#{@pad_group_id}/create"
-      sleep 5
-      session.find(:xpath, "//span[@class= 'create-pad-page__save-button js-save-button']").click
+      while @session.has_no_selector?(:xpath, create_placement)
+        sleep 5
+      end
+      session.find(:xpath, create_placement).click
       sleep 5
     end
     sleep 20
@@ -72,5 +88,7 @@ class Bot
     puts "Placements number: #{@placement_list.count}"
     puts "Placements list:\n"
     @placement_list.each { |a| puts a }
+    @app.status = "Synchronized"
+    @app.save
   end
 end

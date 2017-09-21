@@ -2,8 +2,10 @@
 
 one:
   url: MyString
+  appname: MyString
   status: MyString
 
 two:
   url: MyString
+  appname: MyString
   status: MyString
