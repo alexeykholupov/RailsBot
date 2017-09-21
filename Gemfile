@@ -8,9 +8,11 @@ end
 
 gem 'rails', '~> 5.1.2'
 gem 'capybara', '~> 2.13'
+gem 'headless'
 gem 'coffee-rails', '~> 4.2'
 gem 'mysql2', '>= 0.3.18', '< 0.5'
 gem 'puma', '~> 3.7'
+gem 'redis'
 gem 'sass-rails', '~> 5.0'
 gem 'selenium-webdriver'
 gem 'sidekiq'

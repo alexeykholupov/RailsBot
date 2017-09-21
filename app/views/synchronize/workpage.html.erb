@@ -5,5 +5,12 @@
 <body>
 <h1>Synchronize Page</h1>
 <a href= '/'>Back to user list\creation page</a>
+<%= form_tag("/work", method: "post") do %>
+  <p><%= label_tag(:a, "App url") %>
+  <%= text_field_tag(:a) %></p>
+  <p>myTarget User <%= collection_select(:user_id, :id, User.all, :id, :email) %></p>
+  <%= submit_tag("Synchronize") %>
+<% end %>
+</form>
 </body>
 </html>
