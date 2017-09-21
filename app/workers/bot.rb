@@ -17,9 +17,19 @@ class Bot
     @app = App.find(@app_id)
     @app.status = "In progress"
     @app.save
-    @session.visit @environment
+    begin
+      @session.visit @environment
+    rescue => e
+      @app.status = "Error: #{e.class}"
+      @app.save
+    end
     sleep 10
-    @session.find(:xpath, signin_button).click
+    begin
+      @session.find(:xpath, signin_button).click
+    rescue => e
+      @app.status = "Error: #{e.class}"
+      @app.save
+    end
     @session.fill_in('login', with: User.find(@user_id).email)
     @session.fill_in('password', with: User.find(@user_id).password)
     @session.click_on('Sign in')
@@ -35,18 +45,23 @@ class Bot
       sleep 10
       @session.fill_in('Enter site/app URL', with: @url)
       while @session.has_no_selector?(:xpath, appname_text)
-        sleep 5
+        sleep 1
       end
       @appname = @session.find(:xpath, appname_text).text
       @app.appname = @appname
       @app.save
       @session.fill_in('Site/app name', with: @appname)
       sleep 10
-      @session.find(:xpath, create_app_button).click
+      begin
+        @session.find(:xpath, create_app_button).click
+      rescue => e
+        @app.status = "Error: #{e.class}"
+        @app.save
+      end
       sleep 20
       while @session.has_no_selector?('a', text: @appname)
         while @session.has_no_selector?(:xpath, next_button)
-          sleep 5
+          sleep 1
         end
         @session.find(:xpath, next_button).click
         sleep 5
@@ -71,7 +86,7 @@ class Bot
     n.times do
       session.visit environment + "/pad_groups/#{@pad_group_id}/create"
       while @session.has_no_selector?(:xpath, create_placement)
-        sleep 5
+        sleep 1
       end
       session.find(:xpath, create_placement).click
       sleep 5
