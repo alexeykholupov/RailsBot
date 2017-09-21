@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+</style>
+</head>
+<body>
+<h1>Welcome to Rails myTarget bot</h1>
+<a href= 'users/new'>Create new user</a>
+<p>If user already exist in table, click "Synchronize Page"</p>
+<table style="width:100%">
+  <tr>
+    <th>Users list</th>
+    <th>Show</th>
+    <th>Destroy</th>
+  </tr>
+ 
+  <% @users.each do |user| %>
+    <tr>
+      <td><%= user.email %></td>
+      <td><%= link_to 'Show', user_path(user) %></td>
+      <td><%= link_to 'Destroy', user_path(user),
+              method: :delete%></td>
+    </tr>
+  <% end %>
+</table>
+<a href="synchronize/workpage">Synchronize Page</a>
+
+</body>
+</html>
+
+
+
