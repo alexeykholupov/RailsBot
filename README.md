@@ -1,25 +1,15 @@
-# README
+# Rails web pages with Bot for myTarget platform
+---
+  - User can create additional myTarget account on main page
+  - Creating app and one initial placement on platform
+  - Creating 4 additional ad placements(total of 5)
+  - User can see status of current app placement work
+ ---
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-# Rails Bot
+## Dependencies
+  - redis-server
+  - sidekiq
+  - capybara
+  - headless-gem
+  - selenium-webdriver
+---
